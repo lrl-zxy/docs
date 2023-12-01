@@ -2,7 +2,7 @@ import { defineUserConfig,defaultTheme  } from 'vuepress'
 import { searchPlugin } from '@vuepress/plugin-search'
 export default defineUserConfig({
   charset: 'utf-8',
-  title: '你好， VuePress ！',
+  title: '欢迎您！',
   description: '这是我的第一个 VuePress 站点',
   plugins: [
     searchPlugin({
