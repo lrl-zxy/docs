@@ -4,6 +4,11 @@ export default defineUserConfig({
   charset: 'utf-8',
   title: '欢迎您！',
   description: '这是我的第一个 VuePress 站点',
+  head:[
+    [
+      'link',{rel:'icon',href:'./images/logo.png'}
+    ]
+  ],
   plugins: [
     searchPlugin({
       locales: {
@@ -42,6 +47,6 @@ export default defineUserConfig({
         selectLanguageName: '简体中文',
       },
     },
-    logo: '/images/logo.jpeg',
+    logo: '/images/logo.png',
   }),
 })
