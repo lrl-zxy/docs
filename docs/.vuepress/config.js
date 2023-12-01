@@ -29,7 +29,7 @@ export default defineUserConfig({
         children: [
           {
             text: 'vue3',
-            link: '/vue3.html',
+            link: '/src/vue/vue3.html',
           },
         ],
       },
