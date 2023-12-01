@@ -25,8 +25,13 @@ export default defineUserConfig({
         link: '/',
       },
       {
-        text: '首页',
-        link: '/',
+        text: 'vue',
+        children: [
+          {
+            text: 'vue3',
+            link: '/vue3.html',
+          },
+        ],
       },
     ],
     locales: {
