@@ -330,12 +330,41 @@ npm run dev
 
 ## 10.toRef
 
-- 作用：创建一个 ref 对象，其value值指向另一个对象中的某个属性。
+- 作用：创建一个 ref 对象，其value值指向另一个对象中的某个属性。【让一个不是响应式的数据变成响应式的数据】
 - 语法：```const name = toRef(person,'name')```
 - 应用:   要将响应式对象中的某个属性单独提供给外部使用时。
 
 
 - 扩展：```toRefs``` 与```toRef```功能一致，但可以批量创建多个 ref 对象，语法：```toRefs(person)```
+
+- ```javascript
+  let person = reactive({
+  	name:'张三',
+  	age:18,
+  	job:{
+  		j1:{
+  			salary:20
+  		}
+  	}
+  })
+  return  {
+  	name:toRef(person,'name'),
+  	age:toRef(person,'age'),
+  	salary:toRef(person.job.j1,'salary')
+  }
+  //下面return出去的 修改的name不是person里面name
+  return  {
+  	name:ref(person.name),
+  	age:ref(person.age),
+  	salary:ref(person.job.j1.salary)
+  }
+  //toRefs
+  return {
+      ...toRefs(person)
+  }
+  ```
+
+- 
 
 
 # 三、其它 Composition API
