@@ -8,7 +8,21 @@
 ## 二、闭包的作用
 
 1. 可以在函数的外部访问到函数内部的局部变量
+
 2. 函数内部的变量始终保存在内存中，不会随着函数的结束而销毁
+
+   - ```javascript
+     function createCounter() {
+       var count = 0;
+       return function() {
+         return ++count;
+       };
+     }
+     var counter = createCounter();
+     console.log(counter()); // 输出：1
+     console.log(counter()); // 输出：2
+     console.log(counter()); // 输出：3
+     ```
 
 ## 三、闭包的类型
 
@@ -22,7 +36,7 @@
        function innerFunc() {
          console.log(outer);
        }
-       return innerFunc;
+       return innerFunc();
      }
      
      var closureFunction = outer();
@@ -39,7 +53,7 @@
        function innerFunc() {
          console.log(outer);
        }
-       return innerFunc;
+       return innerFunc();
      }
      outer(); // 输出：执行了outer
      ```
