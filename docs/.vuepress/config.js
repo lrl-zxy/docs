@@ -2,8 +2,8 @@ import { defineUserConfig, defaultTheme } from "vuepress";
 import { searchPlugin } from "@vuepress/plugin-search";
 export default defineUserConfig({
   charset: "utf-8",
-  title: "欢迎您！",
-  description: "这是我的第一个 VuePress 站点",
+  title: "海贼王",
+  description: "个人笔记",
   head: [["link", { rel: "icon", href: "./images/logo.png" }]],
   plugins: [
     searchPlugin({
@@ -26,11 +26,11 @@ export default defineUserConfig({
         link: "/",
       },
       {
-        text: "vue3",
+        text: "vue3(尚硅谷)",
         link: "/src/vue/vue3",
       },
       {
-        text: "webpack",
+        text: "webpack(尚硅谷)",
         children: [
           {
             text: "基础",
