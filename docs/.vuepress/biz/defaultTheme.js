@@ -5,6 +5,10 @@ export const defaultThemeData = {
       link: "/",
     },
     {
+      text: "javascript",
+      link: "/src/javascript/closure",
+    },
+    {
       text: "vue3(尚硅谷)",
       link: "/src/vue/vue3",
     },
@@ -35,6 +39,12 @@ export const defaultThemeData = {
       {
         text: "vue3",
         children: ["/src/vue/vue3.md"],
+      },
+    ],
+    "/src/javascript/closure": [
+      {
+        text: "JavaScript",
+        children: ["/src/javascript/closure.md"],
       },
     ],
     "/src/webpack/base/": [
