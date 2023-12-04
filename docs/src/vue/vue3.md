@@ -418,11 +418,14 @@ npm run dev
   				let timer
   				//通过customRef去实现自定义
   				return customRef((track,trigger)=>{
+                      //必须返回一个对象
   					return{
+              //有人读走get
   						get(){
   							track() //告诉Vue这个value值是需要被“追踪”的
   							return value
   						},
+              //有人改走set
   						set(newValue){
   							clearTimeout(timer)
   							timer = setTimeout(()=>{
@@ -441,7 +444,7 @@ npm run dev
   	}
   </script>
   ```
-
+  
   
 
 ## 5.provide 与 inject
