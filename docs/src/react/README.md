@@ -34,7 +34,7 @@
 
 ### 效果
 
-
+![image-20231207133858380](./assets/image-20231207133858380.png)
 
 ### 相关js库
 
@@ -46,7 +46,7 @@
 
 ### 创建虚拟DOM的两种方式
 
-
+![image-20231207133927111](./assets/image-20231207133927111.png)
 
 1.  纯JS方式(一般不用)
 
@@ -69,7 +69,7 @@
 
 ### 效果
 
-
+![image-20231207133941517](./assets/image-20231207133941517.png)
 
 ### JSX
 
@@ -119,7 +119,7 @@
 
 需求: 动态展示如下列表
 
-
+![image-20231207134016073](./assets/image-20231207134016073.png)
 
 ## 模块与组件、模块化与组件化的理解
 
@@ -147,7 +147,7 @@
 
 当应用是以多组件的方式实现, 这个应用就是一个组件化的应用
 
-
+![image-20231207134046587](./assets/image-20231207134046587.png)
 
 # 第2章：React面向组件编程
 
@@ -155,17 +155,17 @@
 
 ### 2.1.1. 使用React开发者工具调试
 
-
+![image-20231207134100801](./assets/image-20231207134100801.png)
 
 ### 2.1.2. 效果
 
 函数式组件：
 
-
+![image-20231207134115986](./assets/image-20231207134115986.png)
 
 类式组件：
 
-
+![image-20231207134128929](./assets/image-20231207134128929.png)
 
 ### 2.1.3. 注意
 
@@ -226,7 +226,7 @@
 
 3.  *年龄为字符串类型，且为数字类型，默认值为18*
 
-
+![image-20231207134153234](./assets/image-20231207134153234.png)
 
 ### 2.3.2. 理解
 
@@ -242,19 +242,61 @@
 
 ### 2.3.4. 编码操作
 
-1.  内部读取某个属性值
+1. 内部读取某个属性值
 
-2.  对props中的属性值进行类型限制和必要性限制
+   - ```javascript
+     this.props.name
+     ```
+
+2. 对props中的属性值进行类型限制和必要性限制
 
 > 第一种方式（React v15.5 开始已弃用）：
 
+```javascript
+Person.propTypes = {
+ name: React.PropTypes.string.isRequired,
+ age: React.PropTypes.number
+}
+```
+
+
+
 第二种方式（新）：使用prop-types库进限制（需要引入prop-types库）
 
-3.  扩展属性: 将对象的所有属性通过props传递
+```javascript
+Person.propTypes = {
+  name: PropTypes.string.isRequired,
+  age: PropTypes.number. 
+}
+```
 
-4.  默认属性值：
 
-5.  组件类的构造函数
+
+3. 扩展属性: 将对象的所有属性通过props传递
+
+   ```javascript
+   <Person {...person}/>
+   ```
+
+4. 默认属性值：
+
+   ````javascript
+   Person.defaultProps = {
+     age: 18,
+     sex:'男'
+   }
+   ````
+
+5. 组件类的构造函数
+
+   ```javascript
+   constructor(props){
+     super(props)
+     console.log(props)//打印所有属性
+   }
+   ```
+
+   
 
 ## 2.4. 组件三大核心属性3: refs与事件处理
 
@@ -276,11 +318,24 @@
 
 ### 2.4.3. 编码
 
-1.  字符串形式的ref
+1. 字符串形式的ref
 
-2.  回调形式的ref
+   ```javascript
+   <input ref="input1"/>
+   ```
 
-3.  createRef创建ref容器·
+2. 回调形式的ref
+
+   ```javascript
+   <input ref={(c)=>{this.input1 = c}}
+   ```
+
+3. createRef创建ref容器·
+
+   ```javascript
+   myRef = React.createRef() 
+   <input ref={this.myRef}/>
+   ```
 
 ### 2.4.4. 事件处理
 
@@ -337,8 +392,9 @@
 
 
 
-
 生命周期的三个阶段（旧）
+
+![image-20231207135432091](./assets/image-20231207135432091.png)
 
 **1. 初始化阶段:** 由ReactDOM.render()触发\-\--初次渲染
 
@@ -366,7 +422,7 @@
 
 ### 2.6.4. 生命周期流程图(新)
 
-
+![image-20231207135454173](./assets/image-20231207135454173.png)
 
 生命周期的三个阶段（新）
 
@@ -420,8 +476,9 @@
 
 *需求：验证虚拟DOM Diffing算法的存在*
 
-
 ### 2.7.2. 基本原理图
+
+![image-20231207135529147](./assets/image-20231207135529147.png)
 
 
 # 第3章：React应用(基于React脚手架)
@@ -446,14 +503,14 @@
 
 ### 3.1.2. 创建项目并启动
 
-> **第一步**，全局安装：[npm i -g create-react-app]{.mark}
+> **第一步**，全局安装：**npm i -g create-react-app**
 >
-> **第二步**，切换到想创项目的目录，使用命令：[create-react-app
-> hello-react]{.mark}
+> **第二步**，切换到想创项目的目录，使用命令：**create-react-app**
+> **hello-react**
 >
-> **第三步**，进入项目文件夹：[cd hello-react]{.mark}
+> **第三步**，进入项目文件夹：**cd hello-react**
 >
-> **第四步**，启动项目：[npm start]{.mark}
+> **第四步**，启动项目：**npm start**
 
 ### 3.1.3. react脚手架项目结构
 
@@ -554,69 +611,42 @@
 
 1)  GET请求
 
-+-----------------------------------------------------------------------+
-| axios.get(\'/user?ID=12345\')                                         |
-|                                                                       |
-|   .then(function (response) {                                         |
-|                                                                       |
-|     console.log(response.data);                                       |
-|                                                                       |
-|   })                                                                  |
-|                                                                       |
-|   .catch(function (error) {                                           |
-|                                                                       |
-|     console.log(error);                                               |
-|                                                                       |
-|   });                                                                 |
-|                                                                       |
-| axios.get(\'/user\', {                                                |
-|                                                                       |
-|     params: {                                                         |
-|                                                                       |
-|       ID: 12345                                                       |
-|                                                                       |
-|     }                                                                 |
-|                                                                       |
-|   })                                                                  |
-|                                                                       |
-|   .then(function (response) {                                         |
-|                                                                       |
-|     console.log(response);                                            |
-|                                                                       |
-|   })                                                                  |
-|                                                                       |
-|   .catch(function (error) {                                           |
-|                                                                       |
-|     console.log(error);                                               |
-|                                                                       |
-|   });                                                                 |
-+=======================================================================+
-+-----------------------------------------------------------------------+
+```javascript
+axios.get('/user?ID=12345')
+  .then(function (response) {
+    console.log(response.data);
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+
+axios.get('/user', {
+    params: {
+      ID: 12345
+    }
+  })
+  .then(function (response) {
+    console.log(response);
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+```
 
 2)  POST请求
 
-+-----------------------------------------------------------------------+
-| axios.post(\'/user\', {                                               |
-|                                                                       |
-|   firstName: \'Fred\',                                                |
-|                                                                       |
-|   lastName: \'Flintstone\'                                            |
-|                                                                       |
-| })                                                                    |
-|                                                                       |
-| .then(function (response) {                                           |
-|                                                                       |
-| console.log(response);                                                |
-|                                                                       |
-| })                                                                    |
-|                                                                       |
-| .catch(function (error) {                                             |
-|                                                                       |
-| console.log(error);                                                   |
-|                                                                       |
-| });                                                                   |
-+=======================================================================+
-+-----------------------------------------------------------------------+
+```javascript
+axios.post('/user', {
+  firstName: 'Fred',
+  lastName: 'Flintstone'
+})
+.then(function (response) {
+console.log(response);
+})
+.catch(function (error) {
+console.log(error);
+});
+```
 
 ## 4.3. 案例---github用户搜索
 
@@ -658,43 +688,28 @@
 
 1)  GET请求
 
-+-----------------------------------------------------------------------+
-| fetch(url).then(function(response) {                                  |
-|                                                                       |
-|     return response.json()                                            |
-|                                                                       |
-|   }).then(function(data) {                                            |
-|                                                                       |
-|     console.log(data)                                                 |
-|                                                                       |
-|   }).catch(function(e) {                                              |
-|                                                                       |
-|     console.log(e)                                                    |
-|                                                                       |
-|   });                                                                 |
-+=======================================================================+
-+-----------------------------------------------------------------------+
+```javascript
+fetch(url).then(function(response) {
+    return response.json()
+  }).then(function(data) {
+    console.log(data)
+  }).catch(function(e) {
+    console.log(e)
+  });
+```
 
 2)  POST请求
 
-+-----------------------------------------------------------------------+
-|   fetch(url, {                                                        |
-|                                                                       |
-|     method: \"POST\",                                                 |
-|                                                                       |
-|     body: JSON.stringify(data),                                       |
-|                                                                       |
-|   }).then(function(data) {                                            |
-|                                                                       |
-|     console.log(data)                                                 |
-|                                                                       |
-|   }).catch(function(e) {                                              |
-|                                                                       |
-|     console.log(e)                                                    |
-|                                                                       |
-|   })                                                                  |
-+=======================================================================+
-+-----------------------------------------------------------------------+
+```javascript
+fetch(url, {
+    method: "POST",
+    body: JSON.stringify(data),
+  }).then(function(data) {
+    console.log(data)
+  }).catch(function(e) {
+    console.log(e)
+  })
+```
 
 # 第5章：React路由
 
@@ -846,6 +861,8 @@
 
 ### 7.1.4. redux工作流程
 
+![image-20231207135906529](./assets/image-20231207135906529.png)
+
 
 ## 7.2. redux的三个核心概念
 
@@ -974,19 +991,45 @@
 
 ### 7.6.3. 相关API
 
-1.  Provider：让所有组件都可以得到state数据
+1. Provider：让所有组件都可以得到state数据
 
-2.  connect：用于包装 UI 组件生成容器组件
+   ```javascript
+   <Provider store={store}>
+     <App />
+   </Provider>
+   ```
 
-3.  mapStateToprops：将外部的数据（即state对象）转换为UI组件的标签属性
+2. connect：用于包装 UI 组件生成容器组件
 
-4.  mapDispatchToProps：将分发action的函数转换为UI组件的标签属性
+   ```javascript
+   import { connect } from 'react-redux'
+     connect(
+       mapStateToprops,
+       mapDispatchToProps
+     )(Counter)
+   ```
+
+   
+
+3. mapStateToprops：将外部的数据（即state对象）转换为UI组件的标签属性
+
+   ```javascript
+   const mapStateToprops = function (state) {
+     return {
+       value: state
+     }
+   }
+   ```
+
+   
+
+4. mapDispatchToProps：将分发action的函数转换为UI组件的标签属性
 
 ## 7.7. 使用上redux调试工具
 
 ### 7.7.1. 安装chrome浏览器插件
 
-
+![image-20231207140059272](./assets/image-20231207140059272.png)
 
 ### 7.7.2. 下载工具依赖包
 
