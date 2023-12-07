@@ -13,7 +13,7 @@ export const defaultThemeData = {
       link: "/src/vue/vue3",
     },
     {
-      text: "React",
+      text: "React(尚硅谷)",
       link: "/src/react",
     },
     {
