@@ -13,6 +13,10 @@ export const defaultThemeData = {
       link: "/src/vue/vue3",
     },
     {
+      text: "React",
+      link: "/src/react",
+    },
+    {
       text: "webpack(尚硅谷)",
       children: [
         {
@@ -39,6 +43,12 @@ export const defaultThemeData = {
       {
         text: "vue3",
         children: ["/src/vue/vue3.md"],
+      },
+    ],
+    "/src/react": [
+      {
+        text: "React",
+        children: ["/src/react/README.md"],
       },
     ],
     "/src/javascript/closure": [
