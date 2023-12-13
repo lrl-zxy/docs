@@ -537,15 +537,131 @@
 
 ### 2.2.3. 强烈注意
 
-1.  组件中render方法中的this为组件实例对象
+1. 组件中render方法中的this为组件实例对象
 
-2.  组件自定义的方法中this为undefined，如何解决？
+2. 组件自定义的方法中this为undefined，如何解决？
 
-    a.  强制绑定this: 通过函数对象的bind()
+   a.  强制绑定this: 通过函数对象的bind()
 
-    b.  箭头函数
+   b.  箭头函数
 
-3.  状态数据，不能直接修改或更新
+3. 状态数据，不能直接修改或更新
+
+### 2.2.4. 代码
+
+**1_state**
+
+```javascript
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>state</title>
+</head>
+<body>
+	<!-- 准备好一个“容器” -->
+	<div id="test"></div>
+	
+	<!-- 引入react核心库 -->
+	<script type="text/javascript" src="../js/react.development.js"></script>
+	<!-- 引入react-dom，用于支持react操作DOM -->
+	<script type="text/javascript" src="../js/react-dom.development.js"></script>
+	<!-- 引入babel，用于将jsx转为js -->
+	<script type="text/javascript" src="../js/babel.min.js"></script>
+
+	<script type="text/babel">
+		//1.创建组件
+		class Weather extends React.Component{
+			
+			//构造器调用几次？ ———— 1次
+			constructor(props){
+				console.log('constructor');
+				super(props)
+				//初始化状态
+				this.state = {isHot:false,wind:'微风'}
+				//解决changeWeather中this指向问题
+				this.changeWeather = this.changeWeather.bind(this)
+			}
+
+			//render调用几次？ ———— 1+n次 1是初始化的那次 n是状态更新的次数
+			render(){
+				console.log('render');
+				//读取状态
+				const {isHot,wind} = this.state
+				return <h1 onClick={this.changeWeather}>今天天气很{isHot ? '炎热' : '凉爽'}，{wind}</h1>
+			}
+
+			//changeWeather调用几次？ ———— 点几次调几次
+			changeWeather(){
+				//changeWeather放在哪里？ ———— Weather的原型对象上，供实例使用
+				//由于changeWeather是作为onClick的回调，所以不是通过实例调用的，是直接调用
+				//类中的方法默认开启了局部的严格模式，所以changeWeather中的this为undefined
+				
+				console.log('changeWeather');
+				//获取原来的isHot值
+				const isHot = this.state.isHot
+				//严重注意：状态必须通过setState进行更新,且更新是一种合并，不是替换。
+				this.setState({isHot:!isHot})
+				console.log(this);
+
+				//严重注意：状态(state)不可直接更改，下面这行就是直接更改！！！
+				//this.state.isHot = !isHot //这是错误的写法
+			}
+		}
+		//2.渲染组件到页面
+		ReactDOM.render(<Weather/>,document.getElementById('test'))
+				
+	</script>
+</body>
+</html>
+```
+
+**2_state的简写方式**
+
+```javascript
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>state简写方式</title>
+</head>
+<body>
+	<!-- 准备好一个“容器” -->
+	<div id="test"></div>
+	
+	<!-- 引入react核心库 -->
+	<script type="text/javascript" src="../js/react.development.js"></script>
+	<!-- 引入react-dom，用于支持react操作DOM -->
+	<script type="text/javascript" src="../js/react-dom.development.js"></script>
+	<!-- 引入babel，用于将jsx转为js -->
+	<script type="text/javascript" src="../js/babel.min.js"></script>
+
+	<script type="text/babel">
+		//1.创建组件
+		class Weather extends React.Component{
+			//初始化状态
+			state = {isHot:false,wind:'微风'}
+
+			render(){
+				const {isHot,wind} = this.state
+				return <h1 onClick={this.changeWeather}>今天天气很{isHot ? '炎热' : '凉爽'}，{wind}</h1>
+			}
+
+			//自定义方法————要用赋值语句的形式+箭头函数
+			changeWeather = ()=>{
+				const isHot = this.state.isHot
+				this.setState({isHot:!isHot})
+			}
+		}
+		//2.渲染组件到页面
+		ReactDOM.render(<Weather/>,document.getElementById('test'))
+				
+	</script>
+</body>
+</html>
+```
+
+
 
 ## 2.3. 组件三大核心属性2: props
 
