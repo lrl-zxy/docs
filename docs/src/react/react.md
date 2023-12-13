@@ -414,8 +414,117 @@
 *需求: 定义一个展示天气信息的组件*
 
 1.  *默认展示天气炎热 或 凉爽*
-
 2.  *点击文字切换天气*
+
+```javascript
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>state</title>
+</head>
+<body>
+	<!-- 准备好一个“容器” -->
+	<div id="test"></div>
+	
+	<!-- 引入react核心库 -->
+	<script type="text/javascript" src="../js/react.development.js"></script>
+	<!-- 引入react-dom，用于支持react操作DOM -->
+	<script type="text/javascript" src="../js/react-dom.development.js"></script>
+	<!-- 引入babel，用于将jsx转为js -->
+	<script type="text/javascript" src="../js/babel.min.js"></script>
+
+	<script type="text/babel">
+		//1.创建组件
+		class Weather extends React.Component{
+			
+			//构造器调用几次？ ———— 1次
+			constructor(props){
+				console.log('constructor');
+				super(props)
+				//初始化状态
+				this.state = {isHot:false,wind:'微风'}
+				//解决changeWeather中this指向问题
+				this.changeWeather = this.changeWeather.bind(this)
+			}
+
+			//render调用几次？ ———— 1+n次 1是初始化的那次 n是状态更新的次数
+			render(){
+				console.log('render');
+				//读取状态
+				const {isHot,wind} = this.state
+				return <h1 onClick={this.changeWeather}>今天天气很{isHot ? '炎热' : '凉爽'}，{wind}</h1>
+			}
+
+			//changeWeather调用几次？ ———— 点几次调几次
+			changeWeather(){
+				//changeWeather放在哪里？ ———— Weather的原型对象上，供实例使用
+				//由于changeWeather是作为onClick的回调，所以不是通过实例调用的，是直接调用
+				//类中的方法默认开启了局部的严格模式，所以changeWeather中的this为undefined
+				
+				console.log('changeWeather');
+				//获取原来的isHot值
+				const isHot = this.state.isHot
+				//严重注意：状态必须通过setState进行更新,且更新是一种合并，不是替换。
+				this.setState({isHot:!isHot})
+				console.log(this);
+
+				//严重注意：状态(state)不可直接更改，下面这行就是直接更改！！！
+				//this.state.isHot = !isHot //这是错误的写法
+			}
+		}
+		//2.渲染组件到页面
+		ReactDOM.render(<Weather/>,document.getElementById('test'))
+				
+	</script>
+</body>
+</html>
+```
+
+**简写形式**
+
+```javascript
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>state简写方式</title>
+</head>
+<body>
+	<!-- 准备好一个“容器” -->
+	<div id="test"></div>
+	
+	<!-- 引入react核心库 -->
+	<script type="text/javascript" src="../js/react.development.js"></script>
+	<!-- 引入react-dom，用于支持react操作DOM -->
+	<script type="text/javascript" src="../js/react-dom.development.js"></script>
+	<!-- 引入babel，用于将jsx转为js -->
+	<script type="text/javascript" src="../js/babel.min.js"></script>
+
+	<script type="text/babel">
+		//1.创建组件
+		class Weather extends React.Component{
+			//初始化状态
+			state = {isHot:false,wind:'微风'}
+
+			render(){
+				const {isHot,wind} = this.state
+				return <h1 onClick={this.changeWeather}>今天天气很{isHot ? '炎热' : '凉爽'}，{wind}</h1>
+			}
+
+			//自定义方法————要用赋值语句的形式+箭头函数
+			changeWeather = ()=>{
+				const isHot = this.state.isHot
+				this.setState({isHot:!isHot})
+			}
+		}
+		//2.渲染组件到页面
+		ReactDOM.render(<Weather/>,document.getElementById('test'))
+				
+	</script>
+</body>
+</html>
+```
 
 
 
@@ -520,7 +629,254 @@ Person.propTypes = {
    }
    ```
 
-   
+
+### 2.3.5 代码
+
+**1_props基本使用**
+
+```javascript
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>props基本使用</title>
+</head>
+<body>
+	<!-- 准备好一个“容器” -->
+	<div id="test1"></div>
+	<div id="test2"></div>
+	<div id="test3"></div>
+	
+	<!-- 引入react核心库 -->
+	<script type="text/javascript" src="../js/react.development.js"></script>
+	<!-- 引入react-dom，用于支持react操作DOM -->
+	<script type="text/javascript" src="../js/react-dom.development.js"></script>
+	<!-- 引入babel，用于将jsx转为js -->
+	<script type="text/javascript" src="../js/babel.min.js"></script>
+
+	<script type="text/babel">
+		//创建组件
+		class Person extends React.Component{
+			render(){
+				// console.log(this);
+				const {name,age,sex} = this.props
+				return (
+					<ul>
+						<li>姓名：{name}</li>
+						<li>性别：{sex}</li>
+						<li>年龄：{age+1}</li>
+					</ul>
+				)
+			}
+		}
+		//渲染组件到页面
+		ReactDOM.render(<Person name="jerry" age={19}  sex="男"/>,document.getElementById('test1'))
+		ReactDOM.render(<Person name="tom" age={18} sex="女"/>,document.getElementById('test2'))
+
+		const p = {name:'老刘',age:18,sex:'女'}
+		// console.log('@',...p);
+		// ReactDOM.render(<Person name={p.name} age={p.age} sex={p.sex}/>,document.getElementById('test3'))
+		ReactDOM.render(<Person {...p}/>,document.getElementById('test3'))
+	</script>
+</body>
+</html>
+```
+
+**2_对props进行限制**
+
+```javascript
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>对props进行限制</title>
+</head>
+<body>
+	<!-- 准备好一个“容器” -->
+	<div id="test1"></div>
+	<div id="test2"></div>
+	<div id="test3"></div>
+	
+	<!-- 引入react核心库 -->
+	<script type="text/javascript" src="../js/react.development.js"></script>
+	<!-- 引入react-dom，用于支持react操作DOM -->
+	<script type="text/javascript" src="../js/react-dom.development.js"></script>
+	<!-- 引入babel，用于将jsx转为js -->
+	<script type="text/javascript" src="../js/babel.min.js"></script>
+	<!-- 引入prop-types，用于对组件标签属性进行限制 -->
+	<script type="text/javascript" src="../js/prop-types.js"></script>
+
+	<script type="text/babel">
+		//创建组件
+		class Person extends React.Component{
+			render(){
+				// console.log(this);
+				const {name,age,sex} = this.props
+				//props是只读的
+				//this.props.name = 'jack' //此行代码会报错，因为props是只读的
+				return (
+					<ul>
+						<li>姓名：{name}</li>
+						<li>性别：{sex}</li>
+						<li>年龄：{age+1}</li>
+					</ul>
+				)
+			}
+		}
+		//对标签属性进行类型、必要性的限制
+		Person.propTypes = {
+			name:PropTypes.string.isRequired, //限制name必传，且为字符串
+			sex:PropTypes.string,//限制sex为字符串
+			age:PropTypes.number,//限制age为数值
+			speak:PropTypes.func,//限制speak为函数
+		}
+		//指定默认标签属性值
+		Person.defaultProps = {
+			sex:'男',//sex默认值为男
+			age:18 //age默认值为18
+		}
+		//渲染组件到页面
+		ReactDOM.render(<Person name={100} speak={speak}/>,document.getElementById('test1'))
+		ReactDOM.render(<Person name="tom" age={18} sex="女"/>,document.getElementById('test2'))
+
+		const p = {name:'老刘',age:18,sex:'女'}
+		// console.log('@',...p);
+		// ReactDOM.render(<Person name={p.name} age={p.age} sex={p.sex}/>,document.getElementById('test3'))
+		ReactDOM.render(<Person {...p}/>,document.getElementById('test3'))
+
+		function speak(){
+			console.log('我说话了');
+		}
+	</script>
+</body>
+</html>
+```
+
+**3_props的简写方式**
+
+```javascript
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>对props进行限制</title>
+</head>
+<body>
+	<!-- 准备好一个“容器” -->
+	<div id="test1"></div>
+	<div id="test2"></div>
+	<div id="test3"></div>
+	
+	<!-- 引入react核心库 -->
+	<script type="text/javascript" src="../js/react.development.js"></script>
+	<!-- 引入react-dom，用于支持react操作DOM -->
+	<script type="text/javascript" src="../js/react-dom.development.js"></script>
+	<!-- 引入babel，用于将jsx转为js -->
+	<script type="text/javascript" src="../js/babel.min.js"></script>
+	<!-- 引入prop-types，用于对组件标签属性进行限制 -->
+	<script type="text/javascript" src="../js/prop-types.js"></script>
+
+	<script type="text/babel">
+		//创建组件
+		class Person extends React.Component{
+
+			constructor(props){
+				//构造器是否接收props，是否传递给super，取决于：是否希望在构造器中通过this访问props
+				// console.log(props);
+				super(props)
+				console.log('constructor',this.props);
+			}
+
+			//对标签属性进行类型、必要性的限制
+			static propTypes = {
+				name:PropTypes.string.isRequired, //限制name必传，且为字符串
+				sex:PropTypes.string,//限制sex为字符串
+				age:PropTypes.number,//限制age为数值
+			}
+
+			//指定默认标签属性值
+			static defaultProps = {
+				sex:'男',//sex默认值为男
+				age:18 //age默认值为18
+			}
+			
+			render(){
+				// console.log(this);
+				const {name,age,sex} = this.props
+				//props是只读的
+				//this.props.name = 'jack' //此行代码会报错，因为props是只读的
+				return (
+					<ul>
+						<li>姓名：{name}</li>
+						<li>性别：{sex}</li>
+						<li>年龄：{age+1}</li>
+					</ul>
+				)
+			}
+		}
+
+		//渲染组件到页面
+		ReactDOM.render(<Person name="jerry"/>,document.getElementById('test1'))
+	</script>
+</body>
+</html>
+```
+
+**4_函数组件使用props**
+
+```javascript
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>对props进行限制</title>
+</head>
+<body>
+	<!-- 准备好一个“容器” -->
+	<div id="test1"></div>
+	<div id="test2"></div>
+	<div id="test3"></div>
+	
+	<!-- 引入react核心库 -->
+	<script type="text/javascript" src="../js/react.development.js"></script>
+	<!-- 引入react-dom，用于支持react操作DOM -->
+	<script type="text/javascript" src="../js/react-dom.development.js"></script>
+	<!-- 引入babel，用于将jsx转为js -->
+	<script type="text/javascript" src="../js/babel.min.js"></script>
+	<!-- 引入prop-types，用于对组件标签属性进行限制 -->
+	<script type="text/javascript" src="../js/prop-types.js"></script>
+
+	<script type="text/babel">
+		//创建组件
+		function Person (props){
+			const {name,age,sex} = props
+			return (
+					<ul>
+						<li>姓名：{name}</li>
+						<li>性别：{sex}</li>
+						<li>年龄：{age}</li>
+					</ul>
+				)
+		}
+		Person.propTypes = {
+			name:PropTypes.string.isRequired, //限制name必传，且为字符串
+			sex:PropTypes.string,//限制sex为字符串
+			age:PropTypes.number,//限制age为数值
+		}
+
+		//指定默认标签属性值
+		Person.defaultProps = {
+			sex:'男',//sex默认值为男
+			age:18 //age默认值为18
+		}
+		//渲染组件到页面
+		ReactDOM.render(<Person name="jerry"/>,document.getElementById('test1'))
+	</script>
+</body>
+</html>
+```
+
+
 
 ## 2.4. 组件三大核心属性3: refs与事件处理
 
