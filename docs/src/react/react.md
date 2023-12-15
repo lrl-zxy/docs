@@ -1044,6 +1044,68 @@ Person.propTypes = {
 2.  通过event.target得到发生事件的DOM元素对象
 
 
+```javascript
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>事件处理</title>
+</head>
+<body>
+	<!-- 准备好一个“容器” -->
+	<div id="test"></div>
+	
+	<!-- 引入react核心库 -->
+	<script type="text/javascript" src="../js/react.development.js"></script>
+	<!-- 引入react-dom，用于支持react操作DOM -->
+	<script type="text/javascript" src="../js/react-dom.development.js"></script>
+	<!-- 引入babel，用于将jsx转为js -->
+	<script type="text/javascript" src="../js/babel.min.js"></script>
+
+	<script type="text/babel">
+		//创建组件
+		class Demo extends React.Component{
+			/* 
+				(1).通过onXxx属性指定事件处理函数(注意大小写)
+						a.React使用的是自定义(合成)事件, 而不是使用的原生DOM事件 —————— 为了更好的兼容性
+						b.React中的事件是通过事件委托方式处理的(委托给组件最外层的元素) ————————为了的高效
+				(2).通过event.target得到发生事件的DOM元素对象 ——————————不要过度使用ref
+			 */
+			//创建ref容器
+			myRef = React.createRef()
+			myRef2 = React.createRef()
+
+			//展示左侧输入框的数据
+			showData = (event)=>{
+				console.log(event.target);
+				alert(this.myRef.current.value);
+			}
+
+			//展示右侧输入框的数据
+			showData2 = (event)=>{
+				alert(event.target.value);
+			}
+
+			render(){
+				return(
+					<div>
+						<input ref={this.myRef} type="text" placeholder="点击按钮提示数据"/>&nbsp;
+						<button onClick={this.showData}>点我提示左侧的数据</button>&nbsp;
+						<input onBlur={this.showData2} type="text" placeholder="失去焦点提示数据"/>&nbsp;
+					</div>
+				)
+			}
+		}
+		//渲染组件到页面
+		ReactDOM.render(<Demo a="1" b="2"/>,document.getElementById('test'))
+	</script>
+</body>
+</html>
+```
+
+
+
+
 ### 2.4.5. 代码
 
 **1_字符串形式的ref**
@@ -1279,8 +1341,118 @@ Person.propTypes = {
 包含表单的组件分类
 
 1.  受控组件
-
 2.  非受控组件
+
+### 2.5.3. 代码
+
+**1_非受控组件**
+
+```javascript
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>1_非受控组件</title>
+</head>
+<body>
+	<!-- 准备好一个“容器” -->
+	<div id="test"></div>
+	
+	<!-- 引入react核心库 -->
+	<script type="text/javascript" src="../js/react.development.js"></script>
+	<!-- 引入react-dom，用于支持react操作DOM -->
+	<script type="text/javascript" src="../js/react-dom.development.js"></script>
+	<!-- 引入babel，用于将jsx转为js -->
+	<script type="text/javascript" src="../js/babel.min.js"></script>
+
+	<script type="text/babel">
+		//创建组件
+		class Login extends React.Component{
+			handleSubmit = (event)=>{
+				event.preventDefault() //阻止表单提交
+				const {username,password} = this
+				alert(`你输入的用户名是：${username.value},你输入的密码是：${password.value}`)
+			}
+			render(){
+				return(
+					<form onSubmit={this.handleSubmit}>
+						用户名：<input ref={c => this.username = c} type="text" name="username"/>
+						密码：<input ref={c => this.password = c} type="password" name="password"/>
+						<button>登录</button>
+					</form>
+				)
+			}
+		}
+		//渲染组件
+		ReactDOM.render(<Login/>,document.getElementById('test'))
+	</script>
+</body>
+</html>
+```
+
+**2_受控组件**
+
+```javascript
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>2_受控组件</title>
+</head>
+<body>
+	<!-- 准备好一个“容器” -->
+	<div id="test"></div>
+	
+	<!-- 引入react核心库 -->
+	<script type="text/javascript" src="../js/react.development.js"></script>
+	<!-- 引入react-dom，用于支持react操作DOM -->
+	<script type="text/javascript" src="../js/react-dom.development.js"></script>
+	<!-- 引入babel，用于将jsx转为js -->
+	<script type="text/javascript" src="../js/babel.min.js"></script>
+
+	<script type="text/babel">
+		//创建组件
+		class Login extends React.Component{
+
+			//初始化状态
+			state = {
+				username:'', //用户名
+				password:'' //密码
+			}
+
+			//保存用户名到状态中
+			saveUsername = (event)=>{
+				this.setState({username:event.target.value})
+			}
+
+			//保存密码到状态中
+			savePassword = (event)=>{
+				this.setState({password:event.target.value})
+			}
+
+			//表单提交的回调
+			handleSubmit = (event)=>{
+				event.preventDefault() //阻止表单提交
+				const {username,password} = this.state
+				alert(`你输入的用户名是：${username},你输入的密码是：${password}`)
+			}
+
+			render(){
+				return(
+					<form onSubmit={this.handleSubmit}>
+						用户名：<input onChange={this.saveUsername} type="text" name="username"/>
+						密码：<input onChange={this.savePassword} type="password" name="password"/>
+						<button>登录</button>
+					</form>
+				)
+			}
+		}
+		//渲染组件
+		ReactDOM.render(<Login/>,document.getElementById('test'))
+	</script>
+</body>
+</html>
+```
 
 ## 2.6. 组件的生命周期
 
