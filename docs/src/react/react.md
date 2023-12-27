@@ -2346,12 +2346,226 @@ try {
 
 ## 5.4. 嵌套路由使用
 
-### 效果
+### index.js
+
+```javascript
+//引入react核心库
+import React from 'react'
+//引入ReactDOM
+import ReactDOM from 'react-dom'
+//
+import {BrowserRouter} from 'react-router-dom'
+//引入App
+import App from './App'
+
+//使用路由组件 Link和Route组件 必须使用BrowserRouter _____包上  才能完成路由组件的功能
+ReactDOM.render(
+	<BrowserRouter>
+		<App/>
+	</BrowserRouter>,
+	document.getElementById('root')
+)
+```
+
+
+
+### App.js
+
+```javascript
+import React, { Component } from 'react'
+import {Link,Route} from 'react-router-dom'
+import Home from './components/Home'
+import About from './components/About'
+
+export default class App extends Component {
+	render() {
+		return (
+			<div>
+				<div className="row">
+					<div className="col-xs-offset-2 col-xs-8">
+						<div className="page-header"><h2>React Router Demo</h2></div>
+					</div>
+				</div>
+				<div className="row">
+					<div className="col-xs-2 col-xs-offset-2">
+						<div className="list-group">
+
+							{/* 原生html中，靠<a>跳转不同的页面 */}
+							{/* <a className="list-group-item" href="./about.html">About</a>
+							<a className="list-group-item active" href="./home.html">Home</a> */}
+
+							{/* 在React中靠路由链接实现切换组件--编写路由链接 */}
+							<Link className="list-group-item" to="/about">About</Link>
+							<Link className="list-group-item" to="/home">Home</Link>
+						</div>
+					</div>
+					<div className="col-xs-6">
+						<div className="panel">
+							<div className="panel-body">
+								{/* 注册路由 */}
+								<Route path="/about" component={About}/>
+								<Route path="/home" component={Home}/>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		)
+	}
+}
+```
+
+### About组件
+
+```javascript
+import React, { Component } from 'react'
+
+export default class About extends Component {
+	render() {
+		return (
+			<h3>我是About的内容</h3>
+		)
+	}
+}
+```
+
+### Home组件
+
+```javascript
+import React, { Component } from 'react'
+
+export default class Home extends Component {
+	render() {
+		return (
+			<h3>我是Home的内容</h3>
+		)
+	}
+}
+```
+
+
 
 
 ## 5.5. 向路由组件传递参数数据
 
-### 效果
+### 5.5.1 NavLink组件的使用
+
+**activeClassName 就是路由激活状态下的类名称**
+
+```javascript
+import React, { Component } from 'react'
+import {NavLink,Route} from 'react-router-dom'
+import Home from './pages/Home' //Home是路由组件
+import About from './pages/About' //About是路由组件
+import Header from './components/Header' //Header是一般组件
+
+export default class App extends Component {
+	render() {
+		return (
+			<div>
+				<div className="row">
+					<div className="col-xs-offset-2 col-xs-8">
+						<Header/>
+					</div>
+				</div>
+				<div className="row">
+					<div className="col-xs-2 col-xs-offset-2">
+						<div className="list-group">
+
+							{/* 原生html中，靠<a>跳转不同的页面 */}
+							{/* <a className="list-group-item" href="./about.html">About</a>
+							<a className="list-group-item active" href="./home.html">Home</a> */}
+
+							{/* 在React中靠路由链接实现切换组件--编写路由链接 */}
+							<NavLink activeClassName="atguigu" className="list-group-item" to="/about">About</NavLink>
+							<NavLink activeClassName="atguigu" className="list-group-item" to="/home">Home</NavLink>
+						</div>
+					</div>
+					<div className="col-xs-6">
+						<div className="panel">
+							<div className="panel-body">
+								{/* 注册路由 */}
+								<Route path="/about" component={About}/>
+								<Route path="/home" component={Home}/>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		)
+	}
+}
+```
+
+### 5.5.2. 封装MyNavLink组件
+
+**MyNavLink**
+
+```javascript
+import React, { Component } from 'react'
+import {NavLink} from 'react-router-dom'
+
+export default class MyNavLink extends Component {
+	render() {
+		// console.log(this.props);
+		return (
+			<NavLink activeClassName="atguigu" className="list-group-item" {...this.props}/>
+		)
+	}
+}
+```
+
+**App.jsx**
+
+>  标签体内容也是一种特殊的标签属性 所以在MyNavLink组件内可以接收到 About和Home
+
+```javascript
+import React, { Component } from 'react'
+import {Route} from 'react-router-dom'
+import Home from './pages/Home' //Home是路由组件
+import About from './pages/About' //About是路由组件
+import Header from './components/Header' //Header是一般组件
+import MyNavLink from './components/MyNavLink'
+
+export default class App extends Component {
+	render() {
+		return (
+			<div>
+				<div className="row">
+					<div className="col-xs-offset-2 col-xs-8">
+						<Header/>
+					</div>
+				</div>
+				<div className="row">
+					<div className="col-xs-2 col-xs-offset-2">
+						<div className="list-group">
+
+							{/* 原生html中，靠<a>跳转不同的页面 */}
+							{/* <a className="list-group-item" href="./about.html">About</a>
+							<a className="list-group-item active" href="./home.html">Home</a> */}
+
+							{/* 在React中靠路由链接实现切换组件--编写路由链接 */}
+							//About会被当做children的值   在子组件props里面接收到    标签体内容也是一种特殊的标签属性 
+							<MyNavLink to="/about">About</MyNavLink>
+							<MyNavLink to="/home">Home</MyNavLink>
+						</div>
+					</div>
+					<div className="col-xs-6">
+						<div className="panel">
+							<div className="panel-body">
+								{/* 注册路由 */}
+								<Route path="/about" component={About}/>
+								<Route path="/home" component={Home}/>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		)
+	}
+}
+```
+
 
 
 ## 5.6. 多种路由跳转方式
