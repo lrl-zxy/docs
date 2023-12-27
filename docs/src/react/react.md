@@ -1340,8 +1340,8 @@ Person.propTypes = {
 
 包含表单的组件分类
 
-1.  受控组件
-2.  非受控组件
+1.  受控组件   **实时在state里面有数据的**
+2.  非受控组件  **在调用的时候才去取值**
 
 ### 2.5.3. 代码
 
@@ -1665,6 +1665,262 @@ Person.propTypes = {
 
 *2. 输入文本, 点击按钮显示到列表的首位, 并清除输入的文本*
 
+### 3.2.1 App.jsx代码
+
+```javascript
+import React, { Component } from 'react'
+import Header from './components/Header'
+import List from './components/List'
+import Footer from './components/Footer'
+import './App.css'
+
+export default class App extends Component {
+	//状态在哪里，操作状态的方法就在哪里
+
+	//初始化状态
+	state = {todos:[
+		{id:'001',name:'吃饭',done:true},
+		{id:'002',name:'睡觉',done:true},
+		{id:'003',name:'打代码',done:false},
+		{id:'004',name:'逛街',done:false}
+	]}
+
+	//addTodo用于添加一个todo，接收的参数是todo对象
+	addTodo = (todoObj)=>{
+		//获取原todos
+		const {todos} = this.state
+		//追加一个todo
+		const newTodos = [todoObj,...todos]
+		//更新状态
+		this.setState({todos:newTodos})
+	}
+
+	//updateTodo用于更新一个todo对象
+	updateTodo = (id,done)=>{
+		//获取状态中的todos
+		const {todos} = this.state
+		//匹配处理数据
+		const newTodos = todos.map((todoObj)=>{
+			if(todoObj.id === id) return {...todoObj,done}
+			else return todoObj
+		})
+		this.setState({todos:newTodos})
+	}
+
+	//deleteTodo用于删除一个todo对象
+	deleteTodo = (id)=>{
+		//获取原来的todos
+		const {todos} = this.state
+		//删除指定id的todo对象
+		const newTodos = todos.filter((todoObj)=>{
+			return todoObj.id !== id
+		})
+		//更新状态
+		this.setState({todos:newTodos})
+	}
+
+	//checkAllTodo用于全选
+	checkAllTodo = (done)=>{
+		//获取原来的todos
+		const {todos} = this.state
+		//加工数据
+		const newTodos = todos.map((todoObj)=>{
+			return {...todoObj,done}
+		})
+		//更新状态
+		this.setState({todos:newTodos})
+	}
+
+	//clearAllDone用于清除所有已完成的
+	clearAllDone = ()=>{
+		//获取原来的todos
+		const {todos} = this.state
+		//过滤数据
+		const newTodos = todos.filter((todoObj)=>{
+			return !todoObj.done
+		})
+		//更新状态
+		this.setState({todos:newTodos})
+	}
+
+	render() {
+		const {todos} = this.state
+		return (
+			<div className="todo-container">
+				<div className="todo-wrap">
+					<Header addTodo={this.addTodo}/>
+					<List todos={todos} updateTodo={this.updateTodo} deleteTodo={this.deleteTodo}/>
+					<Footer todos={todos} checkAllTodo={this.checkAllTodo} clearAllDone={this.clearAllDone}/>
+				</div>
+			</div>
+		)
+	}
+}
+```
+
+### 3.2.2 Footer.jsx代码
+
+```javascript
+import React, { Component } from 'react'
+import './index.css'
+
+export default class Footer extends Component {
+
+	//全选checkbox的回调
+	handleCheckAll = (event)=>{
+		this.props.checkAllTodo(event.target.checked)
+	}
+
+	//清除已完成任务的回调
+	handleClearAllDone = ()=>{
+		this.props.clearAllDone()
+	}
+
+	render() {
+		const {todos} = this.props
+		//已完成的个数
+		const doneCount = todos.reduce((pre,todo)=> pre + (todo.done ? 1 : 0),0)
+		//总数
+		const total = todos.length
+		return (
+			<div className="todo-footer">
+				<label>
+					<input type="checkbox" onChange={this.handleCheckAll} checked={doneCount === total && total !== 0 ? true : false}/>
+				</label>
+				<span>
+					<span>已完成{doneCount}</span> / 全部{total}
+				</span>
+				<button onClick={this.handleClearAllDone} className="btn btn-danger">清除已完成任务</button>
+			</div>
+		)
+	}
+}
+```
+
+### 3.2.3 Header.jsx代码
+
+```javascript
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
+import {nanoid} from 'nanoid'
+import './index.css'
+
+export default class Header extends Component {
+
+	//对接收的props进行：类型、必要性的限制
+	static propTypes = {
+		addTodo:PropTypes.func.isRequired
+	}
+
+	//键盘事件的回调
+	handleKeyUp = (event)=>{
+		//解构赋值获取keyCode,target
+		const {keyCode,target} = event
+		//判断是否是回车按键
+		if(keyCode !== 13) return
+		//添加的todo名字不能为空
+		if(target.value.trim() === ''){
+			alert('输入不能为空')
+			return
+		}
+		//准备好一个todo对象
+		const todoObj = {id:nanoid(),name:target.value,done:false}
+		//将todoObj传递给App
+		this.props.addTodo(todoObj)
+		//清空输入
+		target.value = ''
+	}
+
+	render() {
+		return (
+			<div className="todo-header">
+				<input onKeyUp={this.handleKeyUp} type="text" placeholder="请输入你的任务名称，按回车键确认"/>
+			</div>
+		)
+	}
+}
+```
+
+### 3.2.4 List.jsx代码
+
+```javascript
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
+import Item from '../Item'
+import './index.css'
+
+export default class List extends Component {
+
+	//对接收的props进行：类型、必要性的限制
+	static propTypes = {
+		todos:PropTypes.array.isRequired,
+		updateTodo:PropTypes.func.isRequired,
+		deleteTodo:PropTypes.func.isRequired,
+	}
+
+	render() {
+		const {todos,updateTodo,deleteTodo} = this.props
+		return (
+			<ul className="todo-main">
+				{
+					todos.map( todo =>{
+						return <Item key={todo.id} {...todo} updateTodo={updateTodo} deleteTodo={deleteTodo}/>
+					})
+				}
+			</ul>
+		)
+	}
+}
+```
+
+### 3.2.5 Item.jsx代码
+
+```javascript
+import React, { Component } from 'react'
+import './index.css'
+
+export default class Item extends Component {
+
+	state = {mouse:false} //标识鼠标移入、移出
+
+	//鼠标移入、移出的回调
+	handleMouse = (flag)=>{
+		return ()=>{
+			this.setState({mouse:flag})
+		}
+	}
+
+	//勾选、取消勾选某一个todo的回调
+	handleCheck = (id)=>{
+		return (event)=>{
+			this.props.updateTodo(id,event.target.checked)
+		}
+	}
+
+	//删除一个todo的回调
+	handleDelete = (id)=>{
+		if(window.confirm('确定删除吗？')){
+			this.props.deleteTodo(id)
+		}
+	}
+
+
+	render() {
+		const {id,name,done} = this.props
+		const {mouse} = this.state
+		return (
+			<li style={{backgroundColor:mouse ? '#ddd' : 'white'}} onMouseEnter={this.handleMouse(true)} onMouseLeave={this.handleMouse(false)}>
+				<label>
+					<input type="checkbox" checked={done} onChange={this.handleCheck(id)}/>
+					<span>{name}</span>
+				</label>
+				<button onClick={()=> this.handleDelete(id) } className="btn btn-danger" style={{display:mouse?'block':'none'}}>删除</button>
+			</li>
+		)
+	}
+}
+```
+
 
 # 第4章：React ajax 
 
@@ -1737,6 +1993,61 @@ console.log(error);
 });
 ```
 
+### 4.2.3. 配置代理
+
+#### 方法一
+
+> 在package.json中追加如下配置
+
+```json
+"proxy":"http://localhost:5000"
+```
+
+说明：
+
+1. 优点：配置简单，前端请求资源时可以不加任何前缀。
+2. 缺点：不能配置多个代理。
+3. 工作方式：上述方式配置代理，当请求了3000不存在的资源时，那么该请求会转发给5000 （优先匹配前端资源）
+
+#### 方法二
+
+1. 第一步：创建代理配置文件
+
+   ```
+   在src下创建配置文件：src/setupProxy.js
+   ```
+
+2. 编写setupProxy.js配置具体代理规则：
+
+   ```js
+   const proxy = require('http-proxy-middleware')
+   
+   module.exports = function(app) {
+     app.use(
+       proxy('/api1', {  //api1是需要转发的请求(所有带有/api1前缀的请求都会转发给5000)
+         target: 'http://localhost:5000', //配置转发目标地址(能返回数据的服务器地址)
+         changeOrigin: true, //控制服务器接收到的请求头中host字段的值
+         /*
+          changeOrigin设置为true时，服务器收到的请求头中的host为：localhost:5000
+          changeOrigin设置为false时，服务器收到的请求头中的host为：localhost:3000
+          changeOrigin默认值为false，但我们一般将changeOrigin值设为true
+         */
+         pathRewrite: {'^/api1': ''} //去除请求前缀，保证交给后台服务器的是正常请求地址(必须配置)
+       }),
+       proxy('/api2', { 
+         target: 'http://localhost:5001',
+         changeOrigin: true,
+         pathRewrite: {'^/api2': ''}
+       })
+     )
+   }
+   ```
+
+说明：
+
+1. 优点：可以配置多个代理，可以灵活的控制请求是否走代理。
+2. 缺点：配置繁琐，前端请求资源时必须加前缀。
+
 ## 4.3. 案例---github用户搜索
 
 ### 4.3.1. 效果
@@ -1744,6 +2055,136 @@ console.log(error);
 
 
 请求地址: <https://api.github.com/search/users?q=xxxxxx>
+
+### 4.3.2. github用户搜索——axios
+
+#### App.jsx
+
+```javascript
+import React, { Component } from 'react'
+import Search from './components/Search'
+import List from './components/List'
+
+export default class App extends Component {
+
+	state = { //初始化状态
+		users:[], //users初始值为数组
+		isFirst:true, //是否为第一次打开页面
+		isLoading:false,//标识是否处于加载中
+		err:'',//存储请求相关的错误信息
+	} 
+
+	//更新App的state
+	updateAppState = (stateObj)=>{
+		this.setState(stateObj)
+	}
+
+	render() {
+		return (
+			<div className="container">
+				<Search updateAppState={this.updateAppState}/>
+				<List {...this.state}/>
+			</div>
+		)
+	}
+}
+```
+
+#### Search.jsx
+
+```javascript
+import React, { Component } from 'react'
+import axios from 'axios'
+
+export default class Search extends Component {
+
+	search = ()=>{
+		//获取用户的输入(连续解构赋值+重命名)
+		const {keyWordElement:{value:keyWord}} = this
+		//发送请求前通知App更新状态
+		this.props.updateAppState({isFirst:false,isLoading:true})
+		//发送网络请求
+		axios.get(`/api1/search/users?q=${keyWord}`).then(
+			response => {
+				//请求成功后通知App更新状态
+				this.props.updateAppState({isLoading:false,users:response.data.items})
+			},
+			error => {
+				//请求失败后通知App更新状态
+				this.props.updateAppState({isLoading:false,err:error.message})
+			}
+		)
+	}
+
+	render() {
+		return (
+			<section className="jumbotron">
+				<h3 className="jumbotron-heading">搜索github用户</h3>
+				<div>
+					<input ref={c => this.keyWordElement = c} type="text" placeholder="输入关键词点击搜索"/>&nbsp;
+					<button onClick={this.search}>搜索</button>
+				</div>
+			</section>
+		)
+	}
+}
+```
+
+#### List.jsx
+
+```javascript
+import React, { Component } from 'react'
+import './index.css'
+
+export default class List extends Component {
+	render() {
+		const {users,isFirst,isLoading,err} = this.props
+		return (
+			<div className="row">
+				{
+					isFirst ? <h2>欢迎使用，输入关键字，随后点击搜索</h2> :
+					isLoading ? <h2>Loading......</h2> :
+					err ? <h2 style={{color:'red'}}>{err}</h2> :
+					users.map((userObj)=>{
+						return (
+							<div key={userObj.id} className="card">
+								<a rel="noreferrer" href={userObj.html_url} target="_blank">
+									<img alt="head_portrait" src={userObj.avatar_url} style={{width:'100px'}}/>
+								</a>
+								<p className="card-text">{userObj.login}</p>
+							</div>
+						)
+					})
+				}
+			</div>
+		)
+	}
+}
+```
+
+#### 注意点 三目运算符的连写形式
+
+```javascript
+<div className="row">
+				{
+					isFirst ? <h2>欢迎使用，输入关键字，随后点击搜索</h2> :
+					isLoading ? <h2>Loading......</h2> :
+					err ? <h2 style={{color:'red'}}>{err}</h2> :
+					users.map((userObj)=>{
+						return (
+							<div key={userObj.id} className="card">
+								<a rel="noreferrer" href={userObj.html_url} target="_blank">
+									<img alt="head_portrait" src={userObj.avatar_url} style={{width:'100px'}}/>
+								</a>
+								<p className="card-text">{userObj.login}</p>
+							</div>
+						)
+					})
+				}
+			</div>
+```
+
+
 
 ## 4.4. 消息订阅-发布机制 
 
@@ -1798,6 +2239,20 @@ fetch(url, {
   }).catch(function(e) {
     console.log(e)
   })
+```
+
+### 注意点 try catch
+
+```javascript
+try {
+			const response= await fetch(`/api1/search/users2?q=${keyWord}`)
+			const data = await response.json()
+			console.log(data);
+			PubSub.publish('atguigu',{isLoading:false,users:data.items})
+		} catch (error) {
+			console.log('请求出错',error);
+			PubSub.publish('atguigu',{isLoading:false,err:error.message})
+		}
 ```
 
 # 第5章：React路由
