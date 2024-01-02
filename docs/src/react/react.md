@@ -3054,7 +3054,7 @@ export default class App extends Component {
 
 > [npm install \--save redux-thunk]{.mark}
 
-## 7.6. react-redux {#react-redux .unnumbered}
+## 7.6. react-redux
 
 ### 7.6.1. 理解
 
